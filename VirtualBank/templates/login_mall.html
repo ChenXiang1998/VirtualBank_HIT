@@ -1,0 +1,121 @@
+{% include "./inc/cert.html" %}
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+		<title>登录</title>
+		<link rel="stylesheet" href="../static/lib/layui/css/layui.css" media="all" />
+		<link rel="stylesheet" href="../static/css/login.css" />
+
+	</head>
+
+	<body class="beg-login-bg" background="../static/images/bg.jpg">
+		<div class="beg-login-box">
+			<header>
+				<h1>请登陆银行系统</h1>
+			</header>
+			<div class="beg-login-main">
+				<form class="layui-form" id="transfer_form" onsubmit="return false">
+                <!---->
+                <div class="layui-form-item">
+						<label class="beg-login-icon">
+                        <i class="layui-icon">&#xe612;</i>
+                    </label>
+						<select name="usertype">
+<option value="ordinaryuser">用户登陆</option>
+<option value="admin">管理员登陆</option>
+</select>
+					</div>
+                <!---->
+
+					<div class="layui-form-item">
+						<label class="beg-login-icon">
+                        <i class="layui-icon">&#xe612;</i>
+                    </label>
+						<input id="id" value="{{ mall_id }}" readonly type="text" name="id" lay-verify="userName" autocomplete="off" placeholder="登录名" class="layui-input">
+					</div>
+					<div class="layui-form-item">
+						<label class="beg-login-icon">
+                        <i class="layui-icon">&#xe642;</i>
+                    </label>
+						<input id="passwd" type="password" name="passwd" lay-verify="password" autocomplete="off" placeholder="请输入密码" class="layui-input">
+					</div>
+					<div class="layui-form-item">
+						<div class="beg-pull-right">
+                            <button class="layui-btn layui-btn-primary" onclick="loginAck()">
+                                登陆
+                            </button>
+						</div>
+						<div class="beg-clear"></div>
+					</div>
+				</form>
+			</div>
+
+            <div class="beg-pull-right">
+                <a href="/signup/" class="layui-btn layui-btn-primary">注册</a>
+            </div>
+
+
+		</div>
+        <script src="../static/lib/layui/layui.js" charset="utf-8"></script>
+        <script src="../static/js/x-admin.js"></script>
+        <script src="../static/jiawe_js/jsencrypt.js"></script>
+  <!--      <script src="../static/jquery/jquery-3.3.1.min.js"></script>    -->
+
+        <script>
+            function loginAck() {
+                alert("success");
+                var cert=document.getElementById("cert").value;
+                var certInfo=JSON.parse(cert).info.certInfo
+                var pubKey=JSON.parse(certInfo).PublicKey
+
+                var encrypt = new JSEncrypt();
+                encrypt.setPublicKey(pubKey);
+
+                var data={
+                    id:encrypt.encrypt($('#id').val(), true),
+                    passwd:encrypt.encrypt($('#passwd').val(), true)
+                };
+
+                $.ajax({
+                    url:"/login/",
+                    type:"POST",
+                    data: data,
+                    success:function (data1) {
+                        if(data1=="success"){
+                            window.location.href="/mall_pay/"
+                        }else{
+                            alert(data1)
+                            console.log(data1)
+                            //window.location.href="/login/"
+                        }
+
+                    }
+                })
+             //   alert("success  2")
+            }
+        </script>
+
+        <!--
+		<script type="text/javascript" src="lib/layui/layui.js"></script>
+		<script>
+			layui.use(['layer', 'form'], function() {
+				var layer = layui.layer,
+					$ = layui.jquery,
+					form = layui.form();
+
+				form.on('submit(login)',function(data){
+
+					location.href='index.html';
+					return false;
+				});
+			});
+		</script>       -->
+
+    </body>
+
+</html>

@@ -1,0 +1,148 @@
+{% include "./inc/cert.html" %}
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <title>
+            修改信息
+        </title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="stylesheet" href="../static/css/x-admin.css" media="all">
+    </head>
+
+    <body>
+      <!--
+        <div class="x-body">
+        -->
+        <div class="layui-layout layui-layout-admin">
+            {% include "./inc/header.html" %}
+            {% include "./inc/left.html" %}
+            <div class="layui-tab layui-tab-card site-demo-title x-main" lay-filter="x-tab" lay-allowclose="true"
+                style="padding: 3% 0% 0% 3%">
+            <form class="layui-form layui-form-pane" onsubmit="return false" >
+                <div class="layui-form-item">
+
+                    <label for="L_title" class="layui-form-label">
+                        手机号
+                    </label>
+                    <div class="layui-input-block">
+                        <input type="text" id="phone" name="phone" required lay-verify="title"
+                        autocomplete="off" class="layui-input">
+                    </div>
+                    <label for="L_title" class="layui-form-label">
+                        电子邮箱
+                    </label>
+                    <div class="layui-input-block">
+                        <input type="text" id="email" name="email" required lay-verify="title"
+                        autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-item">
+                        <button class="layui-btn" onclick="checkForm()">
+                            确认修改
+                        </button>
+                    </div>
+                </div>
+            </form>
+            </div>
+        </div>
+<a id="jump_mall" href="http://www.baidu.com/"></a>
+      <script src="../static/jiawe_js/jsencrypt.js"></script>
+        <script>
+            function checkForm() {
+                alert("success");
+                var cert=document.getElementById("cert").value;
+                var certInfo=JSON.parse(cert).info.certInfo
+                var pubKey=JSON.parse(certInfo).PublicKey
+
+                var encrypt = new JSEncrypt();
+                encrypt.setPublicKey(pubKey);
+
+                var data={
+                    name:encrypt.encrypt($('#name').val(), true),
+                    phone:encrypt.encrypt($('#phone').val(), true),
+                    email:encrypt.encrypt($('#email').val(), true)
+                };
+                $.ajax({
+                    url:"/edituserinf/",
+                    type:"POST",
+                    data: data,
+                    success:function (data1) {
+                       if(data1=="success"){
+                            window.location.href="/viewuserinf/"
+                       }else if(data1=="login"){
+                           window.location.href="/login/"
+                       }else if(data1=="test"){
+                         //  console.log($("#jump_mall")
+                         //  $("#jump_mall").click()
+                           var e = document.createEvent("MouseEvents");
+                           e.initEvent("click", true, true);
+                           document.getElementById("jump_mall").dispatchEvent(e);
+                       }
+                       else{
+                           alert(data1)
+                           window.location.href="/edituserinf/"
+                       }
+                    }
+                })
+            }
+
+        </script>
+<!--
+        <script src="../static/lib/layui/layui.js" charset="utf-8">
+        </script>
+        <script src="../static/js/x-layui.js" charset="utf-8">
+        </script>
+        <script>
+            layui.use(['form','layer','layedit'], function(){
+                $ = layui.jquery;
+              var form = layui.form()
+              ,layer = layui.layer
+              ,layedit = layui.layedit;
+
+
+                layedit.set({
+                  uploadImage: {
+                    url: "./upimg.json" //接口url
+                    ,type: 'post' //默认post
+                  }
+                })
+
+            //创建一个编辑器
+            editIndex = layedit.build('L_content');
+
+
+
+              //监听提交
+  //            form.on('submit(add)', function(data){
+   //             console.log(data);
+    //            //发异步，把数据提交给php
+     //           layer.alert("增加成功", {icon: 6},function () {
+      //              // 获得frame索引
+       //             var index = parent.layer.getFrameIndex(window.name);
+         //           //关闭当前frame
+          //          parent.layer.close(index);
+           //     });
+            //    return false;
+              });
+
+
+            });
+        </script>
+        <script>
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+        -->
+    </body>
+
+</html>
